@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="smallStyle.css">
+</head>
+
+<body>
+
+<h1>Calculator</h1>
+<h2>JS-991EX</h2>
+
+<div class="calculator">
+
+    <div class="log" id="calc-log">Log:</div>
+    <div class="display" id="calc-display">0</div>
+
+    <div class="buttons">
+
+        <button class="button">7</button>
+        <button class="button">8</button>
+        <button class="button">9</button>
+        <button class="button">÷</button>
+
+        <button class="button">4</button>
+        <button class="button">5</button>
+        <button class="button">6</button>
+        <button class="button">×</button>
+
+        <button class="button">1</button>
+        <button class="button">2</button>
+        <button class="button">3</button>
+        <button class="button">-</button>
+
+        <button class="button">.</button>
+        <button class="button">0</button>
+        <button class="button" id="">=</button>
+        <button class="button">+</button>
+
+        <button class="button">x²</button>
+        <button class="button">x³</button>
+        <button class="button">√</button>
+        <button class="button">∛</button>
+
+
+
+
+        <button id="clear" class="button">CLEAR</button>
+        <button id="backspace" class="button">⌫</button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const display = document.getElementById('calc-display');
+const log = document.getElementById('calc-log');
+const buttons = document.querySelectorAll('.button');
+const clearBtn = document.getElementById('clear');
+const backspaceBtn = document.getElementById('backspace');
+
+
+let calculation = "";
+
+
+// Add numbers/operators
+function addToCalculation(value) {
+
+    if (display.textContent === "0") {
+        display.textContent = value;
+    } 
+    else {
+        display.textContent += value;
+    }
+
+    calculation += value;
+}
+
+
+// Calculate answer
+function calculate() {
+    /*This is to make sure that no items are being selected. This ensures that when the "Enter" button is pressed,
+     it does not input the selected item into the display. 
+     */
+    if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) 
+    {
+        document.activeElement.blur();
+    }
+
+    try {
+        let result;
+
+        if (calculation.match('∛'))
+        {
+            //Removing the "∛" symbol so we can calculate the cube root
+            let filteredString = calculation.substring(1);
+            //Making sure that the string is converted to an integer
+            result = Math.cbrt(parseInt(filteredString));
+        }
+            //Checking if the square root symbol is detected
+        else if (calculation.match('√'))
+        {
+            //Removing the "√" symbol so we can calculate the square root
+            let filteredString = calculation.substring(1);
+            //Making sure that the string is converted to an integer
+            result = Math.sqrt(parseInt(filteredString));
+        }
+        else{
+            result = eval(
+            calculation
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/²/g, '**2')
+                .replace(/³/g, '**3')
+            );
+        }
+        //Displaying the result
+        log.textContent = `Log: ${calculation} = ${result}`;
+        display.textContent = result;
+        calculation = result.toString();
+    }
+    catch(e) {
+
+        //display.textContent = "Error";
+        display.textContent = e;
+        calculation = "";
+
+    }
+}
+
+// Clear calculator
+function clearCalculator() {
+
+    calculation = "";
+    display.textContent = "0";
+    log.textContent = "Log:";
+
+}
+
+
+// Delete last character
+function backspace() {
+
+    calculation = calculation.slice(0, -1);
+
+    display.textContent = calculation || "0";
+
+}
+
+// Button clicks
+buttons.forEach(button => {
+
+    button.addEventListener('click', (e) => {
+
+        e.preventDefault();
+        let value = button.textContent;
+
+
+        if (value === "=") {
+            calculate();
+        }
+
+        else if (value === "CLEAR") {
+            clearCalculator();
+        }
+
+        else if (value === "⌫") {
+            backspace();
+        }
+
+        else if (value === "x²") {
+            addToCalculation("²");
+        }
+
+        else if (value === "x³") {
+            addToCalculation("³");
+        }
+
+
+        else {
+            addToCalculation(value);
+        }
+
+    });
+
+});
+
+// Keyboard support
+document.addEventListener("keydown", (event) => {
+
+    let key = event.key;
+
+
+    // Numbers
+    if (key >= "0" && key <= "9") {
+        addToCalculation(key);
+    }
+
+
+    // Decimal
+    else if (key === ".") {
+        addToCalculation(".");
+    }
+
+
+    // Operators
+    else if (key === "+") {
+        addToCalculation("+");
+    }
+
+    else if (key === "-") {
+        addToCalculation("-");
+    }
+
+    else if (key === "*" || key === "x") {
+        addToCalculation("×");
+    }
+
+    else if (key === "/") {
+        addToCalculation("÷");
+    }
+
+
+    // Enter
+    else if (key === "Enter" || key === "=") {
+        calculate();
+    }
+
+
+    // Delete
+    else if (key === "Backspace") {
+        backspace();
+    }
+
+
+    // Clear
+    else if (key === "Escape") {
+        clearCalculator();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
