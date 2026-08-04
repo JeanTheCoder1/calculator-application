@@ -99,7 +99,7 @@ function calculate() {
             //Removing the "∛" symbol so we can calculate the cube root
             let filteredString = calculation.substring(1);
             //Making sure that the string is converted to an integer
-            result = Math.cbrt(parseInt(filteredString));
+            result = Math.cbrt(parseFloat(filteredString));
         }
             //Checking if the square root symbol is detected
         else if (calculation.match('√'))
@@ -107,7 +107,7 @@ function calculate() {
             //Removing the "√" symbol so we can calculate the square root
             let filteredString = calculation.substring(1);
             //Making sure that the string is converted to an integer
-            result = Math.sqrt(parseInt(filteredString));
+            result = Math.sqrt(parseFloat(filteredString));
         }
         else{
             result = eval(
@@ -125,8 +125,8 @@ function calculate() {
     }
     catch(e) {
 
-        //display.textContent = "Error";
-        display.textContent = e;
+        display.textContent = "Error";
+        //display.textContent = e;
         calculation = "";
 
     }
